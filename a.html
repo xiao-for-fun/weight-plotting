@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plot Curve from Google Sheets Data</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #plot {
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Plot from Google Sheets CSV Data</h2>
+
+<!-- Div to hold the plot -->
+<div id="plot"></div>
+
+<script>
+    async function loadCSVAndPlot() {
+        try {
+            // Fetch the CSV data from Google Apps Script (replace with your actual script URL)
+            const response = await fetch('https://script.google.com/macros/s/AKfycbzLOFllWaSa1a5apzFBVErJtNb6D-bPFMQmJK_A-YT5R3Z8iw2ZAZR85G6QpQmKX_Re/exec');
+            const text = await response.text();
+            const rows = text.split("\n").slice(1);  // Skip the header row
+
+            const xData = [];
+            const yData = [];
+
+            // Define the current year (if the dates only include MM.DD format)
+            const currentYear = new Date().getFullYear();
+
+            rows.forEach(row => {
+                const cols = row.split(",");
+                if (cols.length === 2) {
+                    const dateStr = cols[0].trim();  // XData (MM.DD format)
+                    const yValue = parseFloat(cols[1].trim());  // YData
+
+                    // Convert MM.DD format to YYYY-MM-DD
+                    const [month, day] = dateStr.split('.');
+                    const fullDate = `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                    
+                    // Push the converted date and YData
+                    xData.push(fullDate);  // XData (formatted as YYYY-MM-DD)
+                    yData.push(yValue);  // YData
+                }
+            });
+
+            // Plot the data
+            const trace = {
+                x: xData,
+                y: yData,
+                mode: 'lines+markers',
+                type: 'scatter',
+                line: { shape: 'spline' }
+            };
+
+            const data = [trace];
+            const layout = {
+                title: 'Plots',
+                xaxis: {
+                    title: 'Date',
+                    type: 'date',  // Change x-axis type to 'date'
+                    tickformat: '%m.%d'  // Format the date display to MM.DD
+                },
+                yaxis: { title: 'Weight(kg)' }
+            };
+
+            Plotly.newPlot('plot', data, layout);
+
+        } catch (error) {
+            console.error('Error fetching or parsing CSV file:', error);
+        }
+    }
+
+    window.onload = loadCSVAndPlot;
+</script>
+
+</body>
+</html>
