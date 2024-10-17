@@ -55,8 +55,20 @@
                 }
             });
 
+            // Get the last date in the xData array and add 20 days
+            const lastDate = new Date(xData[xData.length - 1]);  // Get the last date
+            const newDate = new Date(lastDate);  // Create a new Date object based on the last date
+            newDate.setDate(newDate.getDate() + 20);  // Add 20 days
+
+            // Format the new date back to 'YYYY-MM-DD'
+            const newDateStr = newDate.toISOString().split('T')[0];  // Get YYYY-MM-DD format
+
+            // Append the new date and yData value
+            xData.push(newDateStr);
+            yData.push(45);  // Fixed yData value (you can change this to any number)
+            
             // Plot the data
-            const trace = {
+            const trace1 = {
                 x: xData,
                 y: yData,
                 mode: 'lines+markers',
@@ -64,7 +76,21 @@
                 line: { shape: 'spline' }
             };
 
-            const data = [trace];
+            // Plot the flower marker at the new data point
+            const trace2 = {
+                x: [newDateStr],
+                y: [45],  // The Y value where you want the flower
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                    size: 20,
+                    symbol: 'star',  // or 'flower-open' for a different style
+                    color: 'golden'
+                },
+                showlegend: false  // Remove legend for this trace
+            };
+
+            const data = [trace1,trace2];
             const layout = {
                 title: 'Plots',
                 xaxis: {
