@@ -36,22 +36,20 @@
             const xData = [];
             const yData = [];
 
-            // Define the current year (if the dates only include MM.DD format)
-            const currentYear = new Date().getFullYear();
-
             rows.forEach(row => {
                 const cols = row.split(",");
                 if (cols.length === 2) {
-                    const dateStr = cols[0].trim();  // XData (MM.DD format)
-                    const yValue = parseFloat(cols[1].trim());  // YData
+                    const dateStr = cols[0].trim();     // XData (YEAR.MM.DD format)
+                    const yValue = parseFloat(cols[1].trim()); // YData
 
-                    // Convert MM.DD format to YYYY-MM-DD
-                    const [month, day] = dateStr.split('.');
-                    const fullDate = `${currentYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                    
-                    // Push the converted date and YData
-                    xData.push(fullDate);  // XData (formatted as YYYY-MM-DD)
-                    yData.push(yValue);  // YData
+                    // Split YEAR.MM.DD into [year, month, day]
+                    const [year, month, day] = dateStr.split('.');
+                    // Construct a valid YYYY-MM-DD date
+                    const fullDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+                    // Push the converted date and the Y data into arrays
+                    xData.push(fullDate);
+                    yData.push(yValue);
                 }
             });
 
